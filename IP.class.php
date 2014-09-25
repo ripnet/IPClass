@@ -15,6 +15,22 @@ class IP {
     
     private $ip;
     private $mask;
+
+    public function __construct($ip, $mask = null)
+    {
+        if ($mask === null)
+        {
+            list($ip, $cidr) = explode('/', $ip);
+            if ($cidr != '')
+            {
+                $this->setCIDR($cidr);
+            }
+        } else {
+            $this->setMask($mask);
+        }
+
+        $this->setIp($ip);
+    }
     
     /**
      * Check to see if a given IP address is valid
@@ -29,7 +45,7 @@ class IP {
     
     public function getFirstUsable($integer = false)
     {
-      if ($this->mask <= -4)
+      if ($this->mask <= ip2long("255.255.255.252"))
       {
           $first = $this->getNetwork(true) + 1;
       } else {
@@ -40,7 +56,7 @@ class IP {
     
     public function getLastUsable($integer = false)
     {
-      if ($this->mask <= -4)
+      if ($this->mask <= ip2long("255.255.255.252"))
       {
           $last = $this->getBroadcast(true) - 1;
       } else {
@@ -63,15 +79,21 @@ class IP {
     
     public function getWildcard($integer = false)
     {
-        $wildcard = ~$this->mask;
+        $wildcard = ~$this->mask & ip2long('255.255.255.255');
         return ($integer) ? $wildcard : long2ip($wildcard);
     }
     
     public function setCIDR($cidr)
     {
         if ($cidr < 0 || $cidr > 32) { throw new Exception('Invalid CIDR: ' . $cidr); }
-        
-        $this->mask = ~((1 << (32 - $cidr)) - 1);
+
+        // The don't work on 64-bit machines
+        //$this->mask = ~((1 << (32 - $cidr)) - 1);
+        //$this->mask = -1 << (32 - $cidr);
+
+        // 64 bit
+        $this->mask = (-1 << (32 - $cidr)) & ip2long('255.255.255.255');
+
     }
     
     public function setIp($ip, $integer = false)
@@ -100,6 +122,11 @@ class IP {
     {
         $maskbin = decbin($this->mask);
         return substr_count($maskbin, '1');
+    }
+
+    public function inNetwork(IP $network)
+    {
+        return (($this->getIP(true) >= $network->getNetwork(true)) && ($this->getIP(true) <= $network->getBroadcast(true)));
     }
     
 }
