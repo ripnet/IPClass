@@ -6,7 +6,7 @@ require "Summarize.class.php";
 /*
  * Pull from file
  */
-$subnets_to_summarize = explode("\n", trim(file_get_contents('s2')));
+$subnets_to_summarize = explode("\n", trim(file_get_contents('subnets')));
 
 // or create your own array
 /*

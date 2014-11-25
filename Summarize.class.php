@@ -32,7 +32,29 @@ class Summarize
             }
             $this->subnets[] = array($sn->getNetwork(true), $sn->getBroadcast(true));
         }
+        $this->coalesce();
         return $this;
+    }
+
+    /**
+     * Coalesce the subnet array
+     */
+    private function coalesce()
+    {
+        foreach ($this->subnets as $key1=>$s1)
+        {
+            foreach ($this->subnets as $key2=>&$s2)
+            {
+                if ($s1 == $s2)
+                    continue;
+                if (($s1[1] + 1) == $s2[0])
+                {
+                    $this->subnets[$key1][1] = $s2[1];
+                    unset($this->subnets[$key2]);
+                    continue;
+                }
+            }
+        }
     }
 
     public function getSubnets()
