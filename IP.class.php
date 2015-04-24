@@ -39,12 +39,17 @@ class IP {
     /**
      * Check to see if a given IP address is valid
      * 
-     * @param type $ip IP Address
-     * @return type boolean
+     * @param string $ip IP Address
+     * @return boolean
      */
     public static function IPCheck($ip)
     {
         return ($ip == long2ip(ip2long($ip)));
+    }
+
+    public function isValid()
+    {
+        return self::IPCheck($this->getIP(false));
     }
 
     /**
@@ -220,12 +225,42 @@ class IP {
 
     public function isRFC1918()
     {
-        $i = $this->getNetwork(true);
+        $i = $this->getIP(true);
         if (($i >= 167772160 && $i <= 184549375) || ($i >= 2886729728 && $i <= 2887778303) || ($i >= 3232235520 && $i <= 3232301055)) {
             return true;
         } else {
             return false;
         }
+    }
+
+    public function isClassA()
+    {
+        $i = $this->getIP(true);
+        return ($i >= 0 && $i <= ip2long('127.255.255.255'));
+    }
+
+    public function isClassB()
+    {
+        $i = $this->getIP(true);
+        return ($i >= ip2long('128.0.0.0') && $i <= ip2long('191.255.255.255'));
+    }
+
+    public function isClassC()
+    {
+        $i = $this->getIP(true);
+        return ($i >= ip2long('192.0.0.0') && $i <= ip2long('223.255.255.255'));
+    }
+
+    public function isClassD()
+    {
+        $i = $this->getIP(true);
+        return ($i >= ip2long('224.0.0.0') && $i <= ip2long('239.255.255.255'));
+    }
+
+    public function isClassE()
+    {
+        $i = $this->getIP(true);
+        return ($i >= ip2long('240.0.0.0') && $i <= ip2long('255.255.255.255'));
     }
 
 }
