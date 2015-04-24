@@ -218,6 +218,16 @@ class IP {
         return $ips;
     }
 
+    public function isRFC1918()
+    {
+        $i = $this->getNetwork(true);
+        if (($i >= 167772160 && $i <= 184549375) || ($i >= 2886729728 && $i <= 2887778303) || ($i >= 3232235520 && $i <= 3232301055)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
 
 ?>
