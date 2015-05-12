@@ -277,7 +277,6 @@ class IP {
             $a = array();
             for ($i = $this->getNetwork(true); $i < $this->getBroadcast(true); $i += $numOfIPs)
             {
-                printf("%s %s\n", $i, long2ip($i));
                 $a[] = new IP(long2ip($i) . "/$size");
             }
             return $a;
