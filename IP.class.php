@@ -16,7 +16,7 @@ class IP {
     private $mask;
 
     /**
-     * @param $ip IP Address (with or without slash notation prefix)
+     * @param string $ip IP Address (with or without slash notation prefix)
      * @param null $mask Subnet Mask
      * @throws Exception
      */
@@ -261,6 +261,27 @@ class IP {
     {
         $i = $this->getIP(true);
         return ($i >= ip2long('240.0.0.0') && $i <= ip2long('255.255.255.255'));
+    }
+
+    /**
+     * Split the network into multiple subnets with bitlength of $size
+     */
+    public function splitInto($size)
+    {
+        if ($size == $this->getCidr()) {
+            return array($this);
+        } elseif ($size < $this->getCidr()) {
+            return false;
+        } else {
+            $numOfIPs = pow(2, (32 - $size));
+            $a = array();
+            for ($i = $this->getNetwork(true); $i < $this->getBroadcast(true); $i += $numOfIPs)
+            {
+                printf("%s %s\n", $i, long2ip($i));
+                $a[] = new IP(long2ip($i) . "/$size");
+            }
+            return $a;
+        }
     }
 
 }
